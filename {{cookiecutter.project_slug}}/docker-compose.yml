@@ -1,0 +1,57 @@
+name: {{ cookiecutter.project_slug }}
+
+services:
+  {%- if cookiecutter.database == "postgres" %}
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: {{ cookiecutter.project_slug }}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d {{ cookiecutter.project_slug }}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  {%- endif %}
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: uv run uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    {%- if cookiecutter.database == "postgres" %}
+    depends_on:
+      db:
+        condition: service_healthy
+    {%- endif %}
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./backend:/app
+      - backend-venv:/app/.venv
+
+  # Uncomment when the frontend is added.
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   command: pnpm dev --host 0.0.0.0
+  #   depends_on:
+  #     - backend
+  #   ports:
+  #     - "127.0.0.1:5173:5173"
+  #   volumes:
+  #     - ./frontend:/app
+  #     - frontend-node-modules:/app/node_modules
+
+volumes:
+  backend-venv:
+  # frontend-node-modules:
+  {%- if cookiecutter.database == "postgres" %}
+  postgres-data:
+  {%- endif %}

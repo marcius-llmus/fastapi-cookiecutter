@@ -1,0 +1,11 @@
+{
+    "project_name": "FastAPI Backend",
+    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+    "project_description": "Layered FastAPI backend.",
+    "database": ["sqlite", "postgres"],
+    "use_alembic": true,
+    "license": ["MIT", "Apache-2.0", "BSD-3-Clause", "Proprietary"],
+    "_copy_without_render": [
+        "*/backend/{% if cookiecutter.use_alembic %}migrations{% endif %}/*script.py.mako*"
+    ]
+}
