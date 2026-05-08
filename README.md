@@ -40,8 +40,6 @@ skill: `route -> service -> repository -> db`.
 
 ```bash
 cookiecutter gh:marcius-llmus/fastapi-cookiecutter
-# or from a local checkout:
-cookiecutter /path/to/fastapi-cookiecutter
 ```
 
 ## Variables
@@ -49,13 +47,13 @@ cookiecutter /path/to/fastapi-cookiecutter
 | Variable | Default | Notes |
 |---|---|---|
 | `project_name` | `FastAPI Backend` | Human-readable name |
-| `project_slug` | derived | Top-level directory + python package name |
-| `project_description` | `Layered FastAPI backend.` | Used in pyproject + main.py title |
+| `project_slug` | derived | Top-level directory and python package name |
+| `project_description` | `Layered FastAPI backend.` | Used in pyproject and main.py title |
 | `database` | `sqlite` / `postgres` | Selects `aiosqlite` or `asyncpg`, plus a `db` service in compose for postgres |
-| `use_alembic` | `true` | Scaffolds `backend/alembic.ini` + `backend/migrations/` |
+| `use_alembic` | `true` | Scaffolds `backend/alembic.ini` and `backend/migrations/` |
 | `license` | `MIT` / `Apache-2.0` / `BSD-3-Clause` / `Proprietary` | Sets `[project].license` |
 
-Docker is always shipped (`Dockerfile` + `docker-compose.yml`); there is no
+Docker is always shipped (`Dockerfile` and `docker-compose.yml`); there is no
 flag to opt out.
 
 ## After generation
@@ -69,32 +67,5 @@ make run                    # uvicorn src.main:app --reload
 
 API at http://localhost:8000, docs at http://localhost:8000/docs.
 
-`backend/.env.example` is provided as a hint — `DevelopmentSettings` already
+`backend/.env.example` is provided as a hint. `DevelopmentSettings` already
 ships sensible defaults, so creating `backend/.env` is optional.
-
-## How conditionals work
-
-This template uses Jinja conditional filenames (no `hooks/` directory) so it
-works on systems where post-gen hook scripts cannot be executed. Conditional
-files live at paths like:
-
-```
-backend/{% if cookiecutter.use_alembic %}alembic.ini{% endif %}
-backend/{% if cookiecutter.use_alembic %}migrations{% endif %}/{% if cookiecutter.use_alembic %}env.py{% endif %}
-```
-
-When the flag is `False`, the path renders to empty and cookiecutter skips it.
-Both the directory name and each child filename must be wrapped to avoid
-re-parenting children into the parent directory.
-
-## Verify locally
-
-```bash
-cookiecutter --no-input -o /tmp/out . database=sqlite
-cd /tmp/out/fastapi_backend
-make install && make lint && make test
-```
-
-Swap `database=postgres` to verify the postgres variant. Both pass `lint`
-(ruff + mypy) and `test` (1 smoke test against `/api/v1/health`) out of the
-box.
