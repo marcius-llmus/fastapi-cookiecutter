@@ -1,9 +1,10 @@
 # fastapi-cookiecutter
 
 A [Cookiecutter](https://cookiecutter.readthedocs.io/) template for a layered
-FastAPI backend in a monorepo layout (`backend/` + `frontend/` siblings),
-aligned with the architecture enforced by the `fastapi-backend-architecture`
-skill: `route -> service -> repository -> db`.
+FastAPI backend: `route -> service -> repository -> db`.
+
+Can be used together with
+[fastapi-backend-architecture](https://github.com/marcius-llmus/fastapi-skill).
 
 ## Generated layout
 
